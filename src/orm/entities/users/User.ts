@@ -9,6 +9,8 @@ export class User {
   id: number;
 
   @Column({
+    length: 100,
+    nullable: false,
     unique: true,
   })
   email: string;
@@ -17,12 +19,14 @@ export class User {
   password: string;
 
   @Column({
+    length: 40,
     nullable: true,
     unique: true,
   })
   username: string;
 
   @Column({
+    length: 40,
     nullable: true,
   })
   name: string;
