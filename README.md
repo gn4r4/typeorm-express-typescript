@@ -59,3 +59,240 @@ docker exec -it be_boilerplate sh -c "npm run seed:run"
 >![placeholder](<https://github.com/gn4r4/typeorm-express-typescript/blob/main/images/9.png?raw=true>)
 
 >![placeholder](<https://github.com/gn4r4/typeorm-express-typescript/blob/main/images/10.png?raw=true>)
+
+**Лабораторна-практична робота №5**
+
+**Тема:** Розширення бекенд-додатку власними сутностями та реалізація REST API
+
+**Мета:** Розвинути навички проектування та реалізації серверної логіки, інтегрувавши проєкт бази даних з курсової роботи у повноцінний бекенд-додаток. Навчитись створювати пов'язані сутності за допомогою TypeORM, керувати структурою БД через міграції та будувати REST API для роботи з реляційними даними.
+
+**Завдання:** Базуючись на boilerplate-проєкті, який ви розгорнули на попередньому занятті, вам необхідно розширити його функціонал, ви маєте реалізувати сутності з вашої курсової роботи з проектування баз даних.
+
+**Основні вимоги:**
+
+- Реалізувати мінімум дві пов'язані сутності (краще - усі ключові сутності з вашого проекту).
+- Результат роботи оформити у вигляді нового власного GitHub-репозиторію.
+
+**Хід роботи:**
+
+**1. Створення сутностей та зв'язків**
+
+У нашому проєкті створюємо класи-сутності (`entities`):
+
+- `Author`
+- `Book`
+- `Book_Author`
+- `Category`
+- `Genre`
+
+Описуємо усі необхідні поля, вказавши типи даних та обмеження. Визначаємо між сутностями реляційні зв'язки
+
+`Author.ts`:
+
+```bash
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { BookAuthor } from '../book_author/BookAuthor';
+
+@Entity('author') // Назва таблиці в БД
+export class Author {
+@PrimaryGeneratedColumn({ name: 'id_author' })
+id_author: number;
+
+@Column({ length: 50 })
+lastname: string;
+
+@Column({ length: 50 })
+firstname: string;
+
+@Column({ length: 50, nullable: true })
+patronymic: string;
+
+@Column({ type: 'date', nullable: true })
+dateofbirth: Date;
+
+// Зв'язок з проміжною таблицею BookAuthor
+@OneToMany(() => BookAuthor, (bookAuthor) => bookAuthor.author)
+bookAuthors: BookAuthor[];
+}
+```
+
+`Category.ts`:
+
+```bash
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+
+import { Book } from '../book/Book';
+
+@Entity('category')
+export class Category {
+@PrimaryGeneratedColumn({ name: 'id_category' })
+id_category: number;
+
+@Column({ length: 100 })
+name: string;
+
+// Одна категорія може мати багато книг
+@OneToMany(() => Book, (book) => book.category)
+books: Book[];
+}
+```
+
+`Genre.ts`:
+
+```bash
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Book } from '../book/Book';
+
+@Entity('genre')
+export class Genre {
+@PrimaryGeneratedColumn({ name: 'id_genre' })
+id_genre: number;
+
+@Column({ length: 100 })
+name: string;
+
+// Один жанр може мати багато книг
+@OneToMany(() => Book, (book) => book.genre)
+books: Book[];
+}
+```
+
+`Book.ts`:
+
+```bash
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Category } from '../category/Category';
+import { Genre } from '../genre/Genre';
+import { BookAuthor } from '../book_author/BookAuthor';
+
+@Entity('book')
+export class Book {
+@PrimaryGeneratedColumn({ name: 'id_book' })
+id_book: number;
+
+@Column({ length: 255 })
+title: string;
+
+// Зовнішній ключ на категорію
+@Column()
+id_category: number;
+
+@ManyToOne(() => Category, (category) => category.books)
+@JoinColumn({ name: 'id_category' }) // Вказуємо, що колонка в БД називається id_category
+category: Category;
+
+// Зовнішній ключ на жанр
+@Column()
+id_genre: number;
+
+@ManyToOne(() => Genre, (genre) => genre.books)
+@JoinColumn({ name: 'id_genre' })
+genre: Genre;
+
+// Зв'язок з авторами через проміжну таблицю
+@OneToMany(() => BookAuthor, (bookAuthor) => bookAuthor.book)
+bookAuthors: BookAuthor[];
+}
+```
+
+`BookAuthor.ts`:
+
+
+```bash
+import { Entity, PrimaryColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Book } from '../book/Book';
+import { Author } from '../author/Author';
+
+@Entity('book_author')
+export class BookAuthor {
+@PrimaryColumn()
+id_book: number;
+
+@PrimaryColumn()
+id_author: number;
+
+@ManyToOne(() => Book, (book) => book.bookAuthors)
+@JoinColumn({ name: 'id_book' })
+book: Book;
+
+@ManyToOne(() => Author, (author) => author.bookAuthors)
+@JoinColumn({ name: 'id_author' })
+author: Author;
+}
+```
+
+**2. Генерація та застосування міграцій**
+
+Створюємо нову міграцію `Entities` за допомогою команди:
+
+```bash
+npm run migration:create Entities
+```
+
+>![placeholder](<https://github.com/gn4r4/typeorm-express-typescript/blob/main/images/workshop5/1.png?raw=true>)
+
+Створена нова міграція:
+
+>![placeholder](<https://github.com/gn4r4/typeorm-express-typescript/blob/main/images/workshop5/2.png?raw=true>)
+
+Генеруємо нові міграції для створених сутностей
+
+```bash
+npm run migration:generate Entities
+```
+
+>![placeholder](<https://github.com/gn4r4/typeorm-express-typescript/blob/main/images/workshop5/3.png?raw=true>)
+
+Запускаємо міграції, щоб оновити структуру нашої бази даних:
+
+```bash
+npm run migration:run
+```
+
+>![placeholder](<https://github.com/gn4r4/typeorm-express-typescript/blob/main/images/workshop5/4.png?raw=true>)
+
+>![placeholder](<https://github.com/gn4r4/typeorm-express-typescript/blob/main/images/workshop5/5.png?raw=true>)
+
+**3. Реалізація REST API**
+
+Створюємо контролер для сутності `Book`. Створюємо нову папку book в `src/controllers`
+
+Кожну окрему функцію виносимо в окремий файл:
+
+>![placeholder](<https://github.com/gn4r4/typeorm-express-typescript/blob/main/images/workshop5/6.png?raw=true>)
+
+Створюємо ендпоінти для `book`, а саме файл `book.ts` в `src/routes/v1`
+
+>![placeholder](<https://github.com/gn4r4/typeorm-express-typescript/blob/main/images/workshop5/7.png?raw=true>)
+
+Повторюємо для інших сутностей
+
+Додані контролери:
+
+>![placeholder](<https://github.com/gn4r4/typeorm-express-typescript/blob/main/images/workshop5/8.png?raw=true>)
+
+Додані ендпоїнти
+
+>![placeholder](<https://github.com/gn4r4/typeorm-express-typescript/blob/main/images/workshop5/9.png?raw=true>)
+
+Підключення ендпоїнтів:
+
+>![placeholder](<https://github.com/gn4r4/typeorm-express-typescript/blob/main/images/workshop5/10.png?raw=true>)
+
+**4. Тестування API**
+
+Доповнюємо нашу колекцію в `Postman` новими запитами
+
+>![placeholder](<https://github.com/gn4r4/typeorm-express-typescript/blob/main/images/workshop5/11.png?raw=true>)
+
+Отримуємо список книг
+
+>![placeholder](<https://github.com/gn4r4/typeorm-express-typescript/blob/main/images/workshop5/12.png?raw=true>)
+
+Отримуємо список авторів
+
+>![placeholder](<https://github.com/gn4r4/typeorm-express-typescript/blob/main/images/workshop5/13.png?raw=true>)
+
+Додаємо запити для всіх створених CRUD-ендпоінтів.
+
+>![placeholder](<https://github.com/gn4r4/typeorm-express-typescript/blob/main/images/workshop5/14.png?raw=true>)
