@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { BookService } from '../../services/BookService';
 import { CustomError } from '../../utils/response/custom-error/CustomError';
+import { BookResponseDTO } from '../../dto/BookResponseDTO';
 
 export class BookController {
   private bookService = new BookService();
@@ -8,7 +9,9 @@ export class BookController {
   public list = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const books = await this.bookService.findAll();
-      res.customSuccess(200, 'List of books.', books);
+      const booksDTO = books.map((book) => new BookResponseDTO(book));
+      
+      res.customSuccess(200, 'List of books.', booksDTO);
     } catch (err) {
       next(new CustomError(400, 'Raw', 'Error', null, err));
     }
@@ -19,17 +22,18 @@ export class BookController {
     try {
       const book = await this.bookService.findOne(id);
       if (!book) return next(new CustomError(404, 'General', `Book with id:${id} not found.`));
-      res.customSuccess(200, 'Book found', book);
+      
+      res.customSuccess(200, 'Book found', new BookResponseDTO(book));
     } catch (err) {
       next(new CustomError(400, 'Raw', 'Error', null, err));
     }
   };
 
   public create = async (req: Request, res: Response, next: NextFunction) => {
+    // authorIds обробляються в Service
     try {
-      // authorIds тепер обробляється всередині сервісу
-      const book = await this.bookService.create(req.body); 
-      res.customSuccess(201, 'Book successfully created.', book);
+      const book = await this.bookService.create(req.body);
+      res.customSuccess(201, 'Book successfully created.', new BookResponseDTO(book));
     } catch (err) {
       next(new CustomError(400, 'Raw', "Can't create book.", null, err));
     }
@@ -40,7 +44,8 @@ export class BookController {
     try {
       const book = await this.bookService.update(id, req.body);
       if (!book) return next(new CustomError(404, 'General', `Book with id:${id} not found.`));
-      res.customSuccess(200, 'Book successfully updated.', book);
+      
+      res.customSuccess(200, 'Book successfully updated.', new BookResponseDTO(book));
     } catch (err) {
       next(new CustomError(400, 'Raw', 'Error', null, err));
     }
@@ -51,6 +56,7 @@ export class BookController {
     try {
       const book = await this.bookService.findOne(id);
       if (!book) return next(new CustomError(404, 'General', `Book with id:${id} not found.`));
+      
       await this.bookService.delete(id);
       res.customSuccess(200, 'Book successfully deleted.', { id });
     } catch (err) {

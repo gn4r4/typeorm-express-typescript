@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { UserService } from '../../services/UserService';
 import { CustomError } from '../../utils/response/custom-error/CustomError';
 import { createJwtToken } from '../../utils/createJwtToken';
+import { UserResponseDTO } from '../../dto/UserResponseDTO';
 import { Role } from '../../orm/entities/users/types';
 
 export class AuthController {
@@ -10,7 +11,8 @@ export class AuthController {
   public login = async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
     try {
-      const user = await this.userService.findByEmail(email, true); // true = завантажити пароль
+      // Передаємо true, щоб дістати пароль для перевірки
+      const user = await this.userService.findByEmail(email, true);
 
       if (!user || !user.checkIfPasswordMatch(password)) {
         return next(new CustomError(404, 'General', 'Not Found', ['Incorrect email or password']));
@@ -38,9 +40,10 @@ export class AuthController {
         return next(new CustomError(400, 'General', 'User already exists', [`Email '${email}' already exists`]));
       }
 
-      // Пароль буде захешовано у сервісі
-      await this.userService.create({ email, password }); 
-      res.customSuccess(200, 'User successfully created.');
+      const newUser = await this.userService.create({ email, password });
+      
+      // Повертаємо DTO, щоб приховати пароль
+      res.customSuccess(200, 'User successfully created.', new UserResponseDTO(newUser));
     } catch (err) {
       return next(new CustomError(400, 'Raw', 'Error', null, err));
     }
@@ -58,7 +61,6 @@ export class AuthController {
         return next(new CustomError(400, 'General', 'Not Found', ['Incorrect password']));
       }
 
-      // Оновлюємо пароль через сервіс
       await this.userService.update(id, { password: passwordNew });
       res.customSuccess(200, 'Password successfully changed.');
     } catch (err) {
