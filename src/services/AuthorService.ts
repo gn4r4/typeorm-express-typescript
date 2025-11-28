@@ -5,11 +5,16 @@ export class AuthorService {
   private authorRepository = getRepository(Author);
 
   async findAll(): Promise<Author[]> {
-    return this.authorRepository.find();
+    return this.authorRepository.find({
+      relations: ['bookAuthors', 'bookAuthors.book'],
+    });
   }
 
   async findOne(id: number): Promise<Author | null> {
-    return this.authorRepository.findOne({ where: { id_author: id } });
+    return this.authorRepository.findOne({
+      where: { id_author: id },
+      relations: ['bookAuthors', 'bookAuthors.book'],
+    });
   }
 
   async create(data: Partial<Author>): Promise<Author> {
@@ -18,9 +23,9 @@ export class AuthorService {
   }
 
   async update(id: number, data: Partial<Author>): Promise<Author | null> {
-    const author = await this.findOne(id);
+    const author = await this.authorRepository.findOne({ where: { id_author: id } });
     if (!author) return null;
-
+    
     this.authorRepository.merge(author, data);
     return this.authorRepository.save(author);
   }

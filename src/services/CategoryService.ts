@@ -5,11 +5,14 @@ export class CategoryService {
   private categoryRepository = getRepository(Category);
 
   async findAll(): Promise<Category[]> {
-    return this.categoryRepository.find();
+    return this.categoryRepository.find({ relations: ['books'] });
   }
 
   async findOne(id: number): Promise<Category | null> {
-    return this.categoryRepository.findOne({ where: { id_category: id } });
+    return this.categoryRepository.findOne({
+      where: { id_category: id },
+      relations: ['books'],
+    });
   }
 
   async create(data: Partial<Category>): Promise<Category> {
@@ -20,7 +23,6 @@ export class CategoryService {
   async update(id: number, data: Partial<Category>): Promise<Category | null> {
     const category = await this.findOne(id);
     if (!category) return null;
-
     this.categoryRepository.merge(category, data);
     return this.categoryRepository.save(category);
   }
