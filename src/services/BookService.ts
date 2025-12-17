@@ -3,8 +3,14 @@ import { Book } from '../orm/entities/book/Book';
 import { BookAuthor } from '../orm/entities/book_author/BookAuthor';
 
 export class BookService {
-  private bookRepository = getRepository(Book);
-  private bookAuthorRepository = getRepository(BookAuthor);
+
+  private get bookRepository() {
+    return getRepository(Book);
+  }
+  
+  private get bookAuthorRepository() {
+    return getRepository(BookAuthor);
+  }
 
   private relations = ['category', 'genre', 'bookAuthors', 'bookAuthors.author'];
 

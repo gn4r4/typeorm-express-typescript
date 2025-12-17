@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMan
 import { Category } from '../category/Category';
 import { Genre } from '../genre/Genre';
 import { BookAuthor } from '../book_author/BookAuthor';
+import { Edition } from '../edition/Edition';
 
 @Entity('book')
 export class Book {
@@ -16,7 +17,7 @@ export class Book {
   id_category: number;
 
   @ManyToOne(() => Category, (category) => category.books)
-  @JoinColumn({ name: 'id_category' }) // Вказуємо, що колонка в БД називається id_category
+  @JoinColumn({ name: 'id_category' }) 
   category: Category;
 
   // Зовнішній ключ на жанр
@@ -30,4 +31,8 @@ export class Book {
   // Зв'язок з авторами через проміжну таблицю
   @OneToMany(() => BookAuthor, (bookAuthor) => bookAuthor.book)
   bookAuthors: BookAuthor[];
+
+  // Зв'язок з виданнями
+  @OneToMany(() => Edition, (edition) => edition.book)
+  editions: Edition[];
 }

@@ -2,18 +2,23 @@ import { getRepository } from 'typeorm';
 import { Author } from '../orm/entities/author/Author';
 
 export class AuthorService {
-  private authorRepository = getRepository(Author);
+
+  private get authorRepository() {
+    return getRepository(Author);
+  }
+
+  private relations = ['bookAuthors', 'bookAuthors.book'];
 
   async findAll(): Promise<Author[]> {
     return this.authorRepository.find({
-      relations: ['bookAuthors', 'bookAuthors.book'],
+      relations: this.relations,
     });
   }
 
   async findOne(id: number): Promise<Author | null> {
     return this.authorRepository.findOne({
       where: { id_author: id },
-      relations: ['bookAuthors', 'bookAuthors.book'],
+      relations: this.relations,
     });
   }
 

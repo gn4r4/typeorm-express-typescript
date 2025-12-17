@@ -1,4 +1,4 @@
 export interface IGenre {
-  id_genre: number;
+  id: number;
   name: string;
 }

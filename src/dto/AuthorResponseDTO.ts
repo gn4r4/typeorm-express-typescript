@@ -6,14 +6,14 @@ export class AuthorResponseDTO {
   lastname: string;
   firstname: string;
   patronymic: string;
-  birthDate: Date;
+  dateofbirth: Date | null;
 
   constructor(author: Author) {
     this.id = author.id_author;
     this.lastname = author.lastname;
     this.firstname = author.firstname;
     this.patronymic = author.patronymic;
-    this.birthDate = author.dateofbirth;
+    this.dateofbirth = author.dateofbirth ? author.dateofbirth : null;
     
     // Приклад computed property (обчислюваного поля)
     this.fullName = `${author.lastname} ${author.firstname} ${author.patronymic || ''}`.trim();

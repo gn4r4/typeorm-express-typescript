@@ -2,16 +2,21 @@ import { getRepository } from 'typeorm';
 import { Category } from '../orm/entities/category/Category';
 
 export class CategoryService {
-  private categoryRepository = getRepository(Category);
+
+  private get categoryRepository() {
+    return getRepository(Category);
+  }
+  
+  private relations = ['books'];
 
   async findAll(): Promise<Category[]> {
-    return this.categoryRepository.find({ relations: ['books'] });
+    return this.categoryRepository.find({ relations: this.relations, });
   }
 
   async findOne(id: number): Promise<Category | null> {
     return this.categoryRepository.findOne({
       where: { id_category: id },
-      relations: ['books'],
+      relations: this.relations,
     });
   }
 

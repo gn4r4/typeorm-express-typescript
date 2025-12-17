@@ -5,8 +5,8 @@ import { checkRole } from '../../middleware/checkRole';
 
 const router = Router();
 
-router.get('/', list);
-router.get('/:id([0-9]+)', show);
+router.get('/', [checkJwt], list);
+router.get('/:id([0-9]+)', [checkJwt], show);
 
 // Валідація перед створенням
 router.post('/', [checkJwt, checkRole(['ADMINISTRATOR'])], create);

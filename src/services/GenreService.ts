@@ -2,16 +2,21 @@ import { getRepository } from 'typeorm';
 import { Genre } from '../orm/entities/genre/Genre';
 
 export class GenreService {
-  private genreRepository = getRepository(Genre);
+
+  private get genreRepository() {
+    return getRepository(Genre);
+  }
+
+  private relations = ['books'];
 
   async findAll(): Promise<Genre[]> {
-    return this.genreRepository.find({ relations: ['books'] });
+    return this.genreRepository.find({ relations: this.relations, });
   }
 
   async findOne(id: number): Promise<Genre | null> {
     return this.genreRepository.findOne({
       where: { id_genre: id },
-      relations: ['books'],
+      relations: this.relations,
     });
   }
 

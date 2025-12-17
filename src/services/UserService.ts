@@ -2,7 +2,10 @@ import { getRepository } from 'typeorm';
 import { User } from '../orm/entities/users/User';
 
 export class UserService {
-  private userRepository = getRepository(User);
+  
+  private get userRepository() {
+    return getRepository(User);
+  }
 
   // Поля, які безпечно показувати адміністратору
   private readonly secureSelect: (keyof User)[] = [
@@ -10,7 +13,6 @@ export class UserService {
   ];
 
   async findByEmail(email: string, withPassword = false): Promise<User | null> {
-    // Якщо потрібен пароль (для логіну), не обмежуємо select
     if (withPassword) {
         return this.userRepository.findOne({ where: { email } });
     }
@@ -33,7 +35,7 @@ export class UserService {
   async create(data: Partial<User>): Promise<User> {
     const newUser = this.userRepository.create(data);
     if (data.password) {
-      newUser.hashPassword(); // Хешування всередині сервісу
+      newUser.hashPassword(); 
     }
     return this.userRepository.save(newUser);
   }
@@ -44,9 +46,8 @@ export class UserService {
 
     this.userRepository.merge(user, data);
     
-    // Якщо оновлюється пароль, треба його хешувати
     if (data.password) {
-        user.hashPassword();
+      user.hashPassword();
     }
     
     return this.userRepository.save(user);
