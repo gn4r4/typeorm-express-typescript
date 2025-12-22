@@ -36,6 +36,7 @@ export class PositionController {
     }
   };
 
+
   public edit = async (req: Request, res: Response, next: NextFunction) => {
     const id = parseInt(req.params.id);
     try {

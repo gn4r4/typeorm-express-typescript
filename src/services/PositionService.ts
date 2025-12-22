@@ -26,10 +26,8 @@ export class PositionService {
   }
 
   async update(id: number, data: Partial<Position>): Promise<Position | null> {
-    const position = await this.findOne(id);
-    if (!position) return null;
-    this.positionRepository.merge(position, data);
-    return this.positionRepository.save(position);
+    await this.positionRepository.update(id, data);
+    return this.findOne(id);
   }
 
   async delete(id: number): Promise<void> {

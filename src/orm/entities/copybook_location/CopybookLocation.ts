@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToOne, JoinColumn } from 'typeorm';
 import { Copybook } from '../copybook/Copybook';
 import { Shelf } from '../shelf/Shelf';
 
@@ -14,10 +14,13 @@ export class CopybookLocation {
   @JoinColumn({ name: 'id_shelf' })
   shelf: Shelf;
 
-  @Column()
-  id_copybook: number;
+  @Column({ nullable: true})
+  id_copybook: number | null;
 
-  @ManyToOne(() => Copybook, (copybook) => copybook.locations)
+  @OneToOne(() => Copybook, (copybook) => copybook.location, { 
+    nullable: true,
+    onDelete: 'SET NULL' 
+  })
   @JoinColumn({ name: 'id_copybook' })
-  copybook: Copybook;
+  copybook: Copybook | null;
 }

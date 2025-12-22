@@ -47,13 +47,9 @@ export class OrdersService {
   }
 
   async update(id: number, data: Partial<Orders> & { details?: { editionId: number, quantity: number }[] }): Promise<Orders | null> {
-    const order = await this.ordersRepository.findOne({ where: { id_order: id } });
-    if (!order) return null;
-
     const { details, ...orderData } = data;
 
-    this.ordersRepository.merge(order, orderData);
-    await this.ordersRepository.save(order);
+    await this.ordersRepository.update(id, orderData);
 
     if (details) {
       await this.orderEditionRepository.delete({ id_order: id });

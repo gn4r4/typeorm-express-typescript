@@ -39,6 +39,8 @@ export const validatorCreateReader = async (req: Request, res: Response, next: N
     errors.push('Address must be between 1 and 255 characters');
   }
 
+  // NOTE: user_id is optional and should be set by the system when creating User+Reader
+
   if (errors.length > 0) {
     const customError = new CustomError(400, 'Validation', 'Reader validation error', errors);
     return next(customError);

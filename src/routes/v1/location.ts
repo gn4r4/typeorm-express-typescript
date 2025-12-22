@@ -1,7 +1,5 @@
 import { Router } from 'express';
-import { list, show, create, edit, destroy } from '../../controllers/book/index';
-import { validatorCreateBook } from '../../middleware/validation/book/validatorCreateBook';
-import { validatorEditBook } from '../../middleware/validation/book/validatorEditBook';
+import { list, show, create, edit, destroy } from '../../controllers/location/index';
 import { checkJwt } from '../../middleware/checkJwt'; // Якщо потрібна авторизація
 import { checkRole } from '../../middleware/checkRole';
 // import { validator } from '../../middleware/validator'; // Якщо є валідація DTO
@@ -12,10 +10,10 @@ router.get('/', [checkJwt], list);
 router.get('/:id', [checkJwt], show);
 
 // Валідація перед створенням
-router.post('/', [checkJwt, checkRole(['ADMINISTRATOR']), validatorCreateBook], create);
+router.post('/', [checkJwt, checkRole(['ADMINISTRATOR'])], create);
 
 // Валідація перед редагуванням
-router.patch('/:id', [checkJwt, checkRole(['ADMINISTRATOR']), validatorEditBook], edit);
+router.patch('/:id', [checkJwt, checkRole(['ADMINISTRATOR'])], edit);
 
 router.delete('/:id', [checkJwt, checkRole(['ADMINISTRATOR'])], destroy);
 

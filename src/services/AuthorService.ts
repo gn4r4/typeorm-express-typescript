@@ -28,11 +28,8 @@ export class AuthorService {
   }
 
   async update(id: number, data: Partial<Author>): Promise<Author | null> {
-    const author = await this.authorRepository.findOne({ where: { id_author: id } });
-    if (!author) return null;
-    
-    this.authorRepository.merge(author, data);
-    return this.authorRepository.save(author);
+    await this.authorRepository.update(id, data);
+    return this.findOne(id);
   }
 
   async delete(id: number): Promise<void> {

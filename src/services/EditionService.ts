@@ -26,10 +26,9 @@ export class EditionService {
   }
 
   async update(id: number, data: Partial<Edition>): Promise<Edition | null> {
-    const edition = await this.findOne(id);
-    if (!edition) return null;
-    this.editionRepository.merge(edition, data);
-    return this.editionRepository.save(edition);
+    await this.editionRepository.update(id, data);
+
+    return this.findOne(id);
   }
 
   async delete(id: number): Promise<void> {

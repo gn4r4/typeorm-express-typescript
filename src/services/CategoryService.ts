@@ -26,10 +26,8 @@ export class CategoryService {
   }
 
   async update(id: number, data: Partial<Category>): Promise<Category | null> {
-    const category = await this.findOne(id);
-    if (!category) return null;
-    this.categoryRepository.merge(category, data);
-    return this.categoryRepository.save(category);
+    await this.categoryRepository.update(id, data);
+    return this.findOne(id);
   }
 
   async delete(id: number): Promise<void> {

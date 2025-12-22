@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { Edition } from '../edition/Edition';
+import { Status } from './types';
 import { CopybookLocation } from '../copybook_location/CopybookLocation';
 import { LendingCopybook } from '../lending_copybook/LendingCopybook';
 
@@ -15,11 +16,14 @@ export class Copybook {
   @JoinColumn({ name: 'id_edition' })
   edition: Edition;
 
-  @Column({ length: 50 })
-  status: string; // наприклад, 'доступний', 'виданий'
+  @Column({ 
+    default: 'доступний' as Status,
+    length: 50, 
+  })
+  status: string;
 
-  @OneToMany(() => CopybookLocation, (location) => location.copybook)
-  locations: CopybookLocation[];
+  @OneToOne(() => CopybookLocation, (location) => location.copybook)
+  location: CopybookLocation;
 
   @OneToMany(() => LendingCopybook, (lendingCopybook) => lendingCopybook.copybook)
   lendingCopybooks: LendingCopybook[];

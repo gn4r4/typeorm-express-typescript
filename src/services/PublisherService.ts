@@ -26,10 +26,8 @@ export class PublisherService {
   }
 
   async update(id: number, data: Partial<Publisher>): Promise<Publisher | null> {
-    const publisher = await this.findOne(id);
-    if (!publisher) return null;
-    this.publisherRepository.merge(publisher, data);
-    return this.publisherRepository.save(publisher);
+    await this.publisherRepository.update(id, data);
+    return this.findOne(id);
   }
 
   async delete(id: number): Promise<void> {

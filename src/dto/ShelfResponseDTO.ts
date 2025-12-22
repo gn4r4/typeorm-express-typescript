@@ -3,12 +3,12 @@ import { CabinetResponseDTO } from './CabinetResponseDTO';
 
 export class ShelfResponseDTO {
   id: number;
-  code: string;
+  shelfcode: string;
   cabinet: CabinetResponseDTO | null;
 
   constructor(shelf: Shelf) {
     this.id = shelf.id_shelf;
-    this.code = shelf.shelfcode;
+    this.shelfcode = shelf.shelfcode;
     
     this.cabinet = shelf.cabinet ? new CabinetResponseDTO(shelf.cabinet) : null;
   }

@@ -27,40 +27,38 @@ export class BookService {
     });
   }
 
-  async create(data: Partial<Book> & { authorIds?: number[] }): Promise<Book> {
-    const { authorIds, ...bookData } = data;
+  async create(data: Partial<Book> & { id_author?: number[] }): Promise<Book> {
+    const { id_author, ...bookData } = data;
     
     // 1. Створюємо книгу
     const newBook = this.bookRepository.create(bookData);
     const savedBook = await this.bookRepository.save(newBook);
 
     // 2. Якщо є автори, створюємо зв'язки
-    if (authorIds && authorIds.length > 0) {
-      const links = authorIds.map(authId => 
+    if (id_author && id_author.length > 0) {
+      const links = id_author.map(authId => 
         this.bookAuthorRepository.create({ id_book: savedBook.id_book, id_author: authId })
       );
       await this.bookAuthorRepository.save(links);
     }
 
-    // Повертаємо книгу з даними
     return this.findOne(savedBook.id_book) as Promise<Book>;
   }
 
-  async update(id: number, data: Partial<Book> & { authorIds?: number[] }): Promise<Book | null> {
-    const book = await this.bookRepository.findOne({ where: { id_book: id } });
-    if (!book) return null;
-
-    const { authorIds, ...bookData } = data;
+  async update(id: number, data: Partial<Book> & { id_author?: number[] }): Promise<Book | null> {
+    const { id_author, ...bookData } = data;
 
     // 1. Оновлюємо основні дані
-    this.bookRepository.merge(book, bookData);
-    await this.bookRepository.save(book);
+    await this.bookRepository.update(id, bookData);
 
-    // 2. Якщо передали authorIds, оновлюємо зв'язки (видалити старі -> додати нові)
-    if (authorIds) {
+    // 2. Якщо передали id_author, оновлюємо зв'язки
+    if (id_author) {
+      // Спочатку видаляємо старі зв'язки
       await this.bookAuthorRepository.delete({ id_book: id });
-      if (authorIds.length > 0) {
-        const links = authorIds.map(authId => 
+      
+      // Потім додаємо нові
+      if (id_author.length > 0) {
+        const links = id_author.map(authId => 
             this.bookAuthorRepository.create({ id_book: id, id_author: authId })
         );
         await this.bookAuthorRepository.save(links);
@@ -71,7 +69,6 @@ export class BookService {
   }
 
   async delete(id: number): Promise<void> {
-    // Спочатку видаляємо зв'язки, якщо каскадне видалення не налаштоване в БД
     await this.bookAuthorRepository.delete({ id_book: id }); 
     await this.bookRepository.delete(id);
   }

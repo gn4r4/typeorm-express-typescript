@@ -12,7 +12,7 @@ export class Edition {
   @Column()
   id_book: number;
 
-  @ManyToOne(() => Book) // Додайте 'editions' у Book.ts, якщо потрібно двосторонній зв'язок
+  @ManyToOne(() => Book)
   @JoinColumn({ name: 'id_book' })
   book: Book;
 

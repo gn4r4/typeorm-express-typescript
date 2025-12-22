@@ -15,6 +15,8 @@ import copybook from './copybook';
 import shelf from './shelf';
 import lending from './lending';
 import orders from './orders';
+import location from './location';
+import reader from './reader';
 
 const router = Router();
 
@@ -33,5 +35,8 @@ router.use('/copybooks', copybook);
 router.use('/shelves', shelf);
 router.use('/lendings', lending);
 router.use('/orders', orders);
+router.use('/locations', location);
+router.use('/readers', reader);
+
 
 export default router;

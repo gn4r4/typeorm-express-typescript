@@ -3,7 +3,7 @@ import { OrderEdition } from '../order_edition/OrderEdition';
 
 @Entity('orders')
 export class Orders {
-  @PrimaryGeneratedColumn({ name: 'id_oreder' }) 
+  @PrimaryGeneratedColumn({ name: 'id_order' }) 
   id_order: number;
 
   @Column({ type: 'date' })

@@ -39,9 +39,12 @@ export const validatorCreateEmployee = async (req: Request, res: Response, next:
     errors.push('Address must be between 1 and 255 characters');
   }
 
-  // Перевірка ID Position
-  if (!id_position || !validator.isInt(String(id_position))) {
+  // Перевірка ID Position (опціонально для PUT/PATCH запитів)
+  // NOTE: id_position є обов'язковим при створенні, але при оновленні може бути пропущено
+  if (req.method === 'POST' && (!id_position || !validator.isInt(String(id_position)))) {
     errors.push('Position ID is required and must be an integer');
+  } else if (id_position && !validator.isInt(String(id_position))) {
+    errors.push('Position ID must be an integer');
   }
 
   if (errors.length > 0) {

@@ -26,10 +26,8 @@ export class CabinetService {
   }
 
   async update(id: number, data: Partial<Cabinet>): Promise<Cabinet | null> {
-    const cabinet = await this.findOne(id);
-    if (!cabinet) return null;
-    this.cabinetRepository.merge(cabinet, data);
-    return this.cabinetRepository.save(cabinet);
+    await this.cabinetRepository.update(id, data);
+    return this.findOne(id);
   }
 
   async delete(id: number): Promise<void> {

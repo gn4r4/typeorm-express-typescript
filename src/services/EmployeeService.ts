@@ -1,5 +1,6 @@
 import { getRepository } from 'typeorm';
 import { Employee } from '../orm/entities/employee/Employee';
+import { Position } from '../orm/entities/position/Position'; // Імпортуйте Position, якщо потрібно для типізації
 
 export class EmployeeService {
 
@@ -26,10 +27,8 @@ export class EmployeeService {
   }
 
   async update(id: number, data: Partial<Employee>): Promise<Employee | null> {
-    const employee = await this.findOne(id);
-    if (!employee) return null;
-    this.employeeRepository.merge(employee, data);
-    return this.employeeRepository.save(employee);
+    await this.employeeRepository.update(id, data);
+    return this.findOne(id);
   }
 
   async delete(id: number): Promise<void> {

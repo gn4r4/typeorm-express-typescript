@@ -27,10 +27,8 @@ export class ShelfService {
   }
 
   async update(id: number, data: Partial<Shelf>): Promise<Shelf | null> {
-    const shelf = await this.findOne(id);
-    if (!shelf) return null;
-    this.shelfRepository.merge(shelf, data);
-    return this.shelfRepository.save(shelf);
+    await this.shelfRepository.update(id, data);
+    return this.findOne(id);
   }
 
   async delete(id: number): Promise<void> {

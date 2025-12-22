@@ -10,7 +10,9 @@ export class ReaderService {
   private relations = ['lendings'];
 
   async findAll(): Promise<Reader[]> {
-    return this.readerRepository.find({ relations: this.relations });
+    return this.readerRepository.find({
+      relations: this.relations,
+    });
   }
 
   async findOne(id: number): Promise<Reader | null> {
@@ -21,15 +23,14 @@ export class ReaderService {
   }
 
   async create(data: Partial<Reader>): Promise<Reader> {
-    const reader = this.readerRepository.create(data);
-    return this.readerRepository.save(reader);
+    const newReader = this.readerRepository.create(data);
+    const savedReader = await this.readerRepository.save(newReader);
+    return this.findOne(savedReader.id_reader) as Promise<Reader>;
   }
 
   async update(id: number, data: Partial<Reader>): Promise<Reader | null> {
-    const reader = await this.findOne(id);
-    if (!reader) return null;
-    this.readerRepository.merge(reader, data);
-    return this.readerRepository.save(reader);
+    await this.readerRepository.update(id, data);
+    return this.findOne(id);
   }
 
   async delete(id: number): Promise<void> {

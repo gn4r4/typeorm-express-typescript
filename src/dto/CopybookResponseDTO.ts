@@ -6,21 +6,24 @@ export class CopybookResponseDTO {
   id: number;
   status: string;
   edition: EditionResponseDTO | null;
-  location: ShelfResponseDTO | null; // Поточне місцезнаходження
+  
+  // ОНОВЛЕНО: Тепер тут живе об'єкт ShelfResponseDTO
+  location: {
+    id: number;              // ID самого місця (CopybookLocation ID)
+    shelf: ShelfResponseDTO; // Вся інфо про полицю та шафу
+  } | null;
 
   constructor(copybook: Copybook) {
     this.id = copybook.id_copybook;
     this.status = copybook.status;
-    
+
     this.edition = copybook.edition ? new EditionResponseDTO(copybook.edition) : null;
 
-    // Логіка визначення полиці: беремо першу знайдену локацію зі списку (або останню додану, залежить від сортування)
-    // Оскільки CopybookLocation зв'язує книгу з полицею
-    if (copybook.locations && copybook.locations.length > 0) {
-      // Припускаємо, що нас цікавить актуальна полиця. 
-      // Якщо у location є shelf, повертаємо її DTO
-      const loc = copybook.locations[0]; 
-      this.location = loc.shelf ? new ShelfResponseDTO(loc.shelf) : null;
+    if (copybook.location && copybook.location.shelf) {
+      this.location = {
+        id: copybook.location.id_location,
+        shelf: new ShelfResponseDTO(copybook.location.shelf)
+      };
     } else {
       this.location = null;
     }

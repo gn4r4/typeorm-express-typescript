@@ -26,10 +26,8 @@ export class GenreService {
   }
 
   async update(id: number, data: Partial<Genre>): Promise<Genre | null> {
-    const genre = await this.findOne(id);
-    if (!genre) return null;
-    this.genreRepository.merge(genre, data);
-    return this.genreRepository.save(genre);
+    await this.genreRepository.update(id, data);
+    return this.findOne(id);
   }
 
   async delete(id: number): Promise<void> {

@@ -1,7 +1,9 @@
 import bcrypt from 'bcryptjs';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToOne } from 'typeorm';
 
 import { Role, Language } from './types';
+import { Employee } from '../employee/Employee';
+import { Reader } from '../reader/Reader';
 
 @Entity('users')
 export class User {
@@ -51,15 +53,29 @@ export class User {
   @UpdateDateColumn()
   updated_at: Date;
 
+  /**
+   * One-to-One relationship with Employee
+   * A User can have an associated Employee account
+   */
+  @OneToOne(() => Employee, (employee) => employee.user, { nullable: true })
+  employee?: Employee;
+
+  /**
+   * One-to-One relationship with Reader
+   * A User can have an associated Reader account
+   */
+  @OneToOne(() => Reader, (reader) => reader.user, { nullable: true })
+  reader?: Reader;
+
   setLanguage(language: Language) {
     this.language = language;
   }
 
-  hashPassword() {
-    this.password = bcrypt.hashSync(this.password, 8);
+  async hashPassword() {
+    this.password = await bcrypt.hashSync(this.password, 8);
   }
 
-  checkIfPasswordMatch(unencryptedPassword: string) {
+  async checkIfPasswordMatch(unencryptedPassword: string): Promise<boolean> {
     return bcrypt.compareSync(unencryptedPassword, this.password);
   }
 }

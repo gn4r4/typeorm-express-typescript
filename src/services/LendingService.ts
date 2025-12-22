@@ -12,8 +12,14 @@ export class LendingService {
     return getRepository(LendingCopybook);
   }
 
-  // Завантажуємо читача, співробітника та список взятих книг
-  private relations = ['reader', 'employee', 'lendingCopybooks', 'lendingCopybooks.copybook', 'lendingCopybooks.copybook.edition.book'];
+  private relations = [
+    'reader', 
+    'employee', 
+    'lendingCopybooks', 
+    'lendingCopybooks.copybook', 
+    'lendingCopybooks.copybook.edition',
+    'lendingCopybooks.copybook.edition.book'
+  ];
 
   async findAll(): Promise<Lending[]> {
     return this.lendingRepository.find({ relations: this.relations });
@@ -26,7 +32,6 @@ export class LendingService {
     });
   }
 
-  // Дозволяє передати масив copybookIds (ID конкретних екземплярів)
   async create(data: Partial<Lending> & { copybookIds?: number[] }): Promise<Lending> {
     const { copybookIds, ...lendingData } = data;
 
@@ -44,19 +49,13 @@ export class LendingService {
   }
 
   async update(id: number, data: Partial<Lending> & { copybookIds?: number[] }): Promise<Lending | null> {
-    const lending = await this.lendingRepository.findOne({ where: { id_lending: id } });
-    if (!lending) return null;
-
     const { copybookIds, ...lendingData } = data;
 
-    this.lendingRepository.merge(lending, lendingData);
-    await this.lendingRepository.save(lending);
+    await this.lendingRepository.update(id, lendingData);
 
     if (copybookIds) {
-      // Видаляємо старі записи про видані книги для цієї операції
       await this.lendingCopybookRepository.delete({ id_lending: id });
       
-      // Додаємо нові, якщо є
       if (copybookIds.length > 0) {
         const links = copybookIds.map(copybookId => 
             this.lendingCopybookRepository.create({ id_lending: id, id_copybook: copybookId })
@@ -69,7 +68,6 @@ export class LendingService {
   }
 
   async delete(id: number): Promise<void> {
-    // Спочатку видаляємо зв'язки (хоча каскадне видалення в БД може це робити автоматично)
     await this.lendingCopybookRepository.delete({ id_lending: id });
     await this.lendingRepository.delete(id);
   }
