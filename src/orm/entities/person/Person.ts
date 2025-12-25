@@ -20,11 +20,4 @@ export abstract class Person {
 
   @Column({ length: 255 })
   address: string;
-
-  /**
-   * Foreign key to User entity
-   * Allows linking person with user account
-   */
-  @Column({ nullable: true })
-  user_id?: number;
 }

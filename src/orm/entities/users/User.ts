@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToOne, JoinColumn } from 'typeorm';
 
 import { Role, Language } from './types';
 import { Employee } from '../employee/Employee';
@@ -45,6 +45,9 @@ export class User {
   })
   language: string;
 
+  @OneToOne(() => Employee, (employee) => employee.user, { nullable: true })
+  employee?: Employee;
+
   @Column()
   @CreateDateColumn()
   created_at: Date;
@@ -52,20 +55,6 @@ export class User {
   @Column()
   @UpdateDateColumn()
   updated_at: Date;
-
-  /**
-   * One-to-One relationship with Employee
-   * A User can have an associated Employee account
-   */
-  @OneToOne(() => Employee, (employee) => employee.user, { nullable: true })
-  employee?: Employee;
-
-  /**
-   * One-to-One relationship with Reader
-   * A User can have an associated Reader account
-   */
-  @OneToOne(() => Reader, (reader) => reader.user, { nullable: true })
-  reader?: Reader;
 
   setLanguage(language: Language) {
     this.language = language;

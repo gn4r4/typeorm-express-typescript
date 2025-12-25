@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
+import { Supplier } from '../supplier/Supplier';
 import { OrderEdition } from '../order_edition/OrderEdition';
 
 @Entity('orders')
@@ -11,6 +12,13 @@ export class Orders {
 
   @Column({ length: 50 })
   status: string;
+
+  @Column()
+  id_supplier: number;
+
+  @ManyToOne(() => Supplier, { nullable: true })
+  @JoinColumn({ name: 'id_supplier' })
+  supplier: Supplier;
 
   @OneToMany(() => OrderEdition, (orderEdition) => orderEdition.order)
   orderEditions: OrderEdition[];

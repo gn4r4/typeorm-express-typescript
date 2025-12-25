@@ -10,12 +10,4 @@ export class Reader extends Person {
 
   @OneToMany(() => Lending, (lending) => lending.reader)
   lendings: Lending[];
-
-  /**
-   * One-to-One relationship with User
-   * A Reader can be linked to a User account
-   */
-  @OneToOne(() => User, (user) => user.reader, { nullable: true })
-  @JoinColumn({ name: 'user_id' })
-  user?: User;
 }

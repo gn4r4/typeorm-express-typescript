@@ -26,6 +26,12 @@ export class Edition {
   @Column({ type: 'date' })
   yearpublication: Date;
 
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  ISBN: string;
+
+  @Column({ type: 'int', nullable: true })
+  pages: number;
+
   @OneToMany(() => Copybook, (copybook) => copybook.edition)
   copybooks: Copybook[];
 

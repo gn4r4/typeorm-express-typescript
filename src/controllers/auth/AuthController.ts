@@ -14,7 +14,7 @@ export class AuthController {
       // Передаємо true, щоб дістати пароль для перевірки
       const user = await this.userService.findByEmail(email, true);
 
-      if (!user || !user.checkIfPasswordMatch(password)) {
+      if (!user || !(await user.checkIfPasswordMatch(password))) {
         return next(new CustomError(404, 'General', 'Not Found', ['Incorrect email or password']));
       }
 
@@ -57,7 +57,7 @@ export class AuthController {
       const user = await this.userService.findByEmail(req.jwtPayload.email, true);
       if (!user) return next(new CustomError(404, 'General', 'Not Found', ['User not found.']));
 
-      if (!user.checkIfPasswordMatch(password)) {
+      if (!(await user.checkIfPasswordMatch(password))) {
         return next(new CustomError(400, 'General', 'Not Found', ['Incorrect password']));
       }
 

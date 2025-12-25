@@ -7,7 +7,6 @@ export class CopybookResponseDTO {
   status: string;
   edition: EditionResponseDTO | null;
   
-  // ОНОВЛЕНО: Тепер тут живе об'єкт ShelfResponseDTO
   location: {
     id: number;              // ID самого місця (CopybookLocation ID)
     shelf: ShelfResponseDTO; // Вся інфо про полицю та шафу
@@ -24,7 +23,8 @@ export class CopybookResponseDTO {
         id: copybook.location.id_location,
         shelf: new ShelfResponseDTO(copybook.location.shelf)
       };
-    } else {
+    } 
+    else {
       this.location = null;
     }
   }

@@ -8,18 +8,15 @@ export class BookResponseDTO {
   title: string;
   category: CategoryResponseDTO | null;
   genre: GenreResponseDTO | null;
-  authors: AuthorResponseDTO[]; // Гарний список авторів замість складної структури
+  authors: AuthorResponseDTO[];
 
   constructor(book: Book) {
     this.id = book.id_book;
     this.title = book.title;
     
-    // Трансформуємо вкладені сутності в їх DTO, якщо вони завантажені
     this.category = book.category ? new CategoryResponseDTO(book.category) : null;
     this.genre = book.genre ? new GenreResponseDTO(book.genre) : null;
 
-    // Магія трансформації Many-to-Many:
-    // Беремо bookAuthors, і з кожного запису витягуємо чистого .author
     if (book.bookAuthors && book.bookAuthors.length > 0) {
       this.authors = book.bookAuthors.map(ba => new AuthorResponseDTO(ba.author));
     } else {

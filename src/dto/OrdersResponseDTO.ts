@@ -1,31 +1,29 @@
 import { Orders } from '../orm/entities/orders/Orders';
 import { EditionResponseDTO } from './EditionResponseDTO';
-
-// Допоміжний інтерфейс для позицій замовлення
-interface OrderItem {
-  edition: EditionResponseDTO;
-  quantity: number;
-}
+import { SupplierResponseDTO } from './SupplierResponseDTO';
 
 export class OrdersResponseDTO {
   id: number;
-  dateOrder: Date;
+  date: Date;
   status: string;
-  items: OrderItem[];
+  supplier: SupplierResponseDTO | null;
+
+  editions: {
+    edition: EditionResponseDTO;
+    quantity: number;
+  }[];
 
   constructor(order: Orders) {
     this.id = order.id_order;
-    this.dateOrder = order.dateorder;
+    this.date = order.dateorder;
     this.status = order.status;
+    this.supplier = order.supplier ? new SupplierResponseDTO(order.supplier) : null;
 
-    // Мапінг позицій замовлення
-    if (order.orderEditions && order.orderEditions.length > 0) {
-      this.items = order.orderEditions.map(oe => ({
-        edition: new EditionResponseDTO(oe.edition),
-        quantity: oe.quantity
-      }));
-    } else {
-      this.items = [];
-    }
+    this.editions = order.orderEditions 
+      ? order.orderEditions.map(oe => ({
+          edition: new EditionResponseDTO(oe.edition),
+          quantity: oe.quantity
+        }))
+      : [];
   }
 }

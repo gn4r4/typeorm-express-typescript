@@ -51,7 +51,7 @@ export class ShelfController {
     const id = parseInt(req.params.id);
     try {
       await this.shelfService.delete(id);
-      res.customSuccess(200, 'Shelf deleted.', { id });
+      res.status(204).send();
     } catch (err) {
       next(new CustomError(400, 'Raw', 'Error', null, err));
     }

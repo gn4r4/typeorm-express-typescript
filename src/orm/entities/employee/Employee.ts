@@ -12,6 +12,9 @@ export class Employee extends Person {
   @Column()
   id_position: number;
 
+  @Column({ nullable: true })
+  id_user: number;
+
   @ManyToOne(() => Position, (position) => position.employees)
   @JoinColumn({ name: 'id_position' })
   position: Position;
@@ -19,11 +22,7 @@ export class Employee extends Person {
   @OneToMany(() => Lending, (lending) => lending.employee)
   lendings: Lending[];
 
-  /**
-   * One-to-One relationship with User
-   * An Employee can be linked to a User account
-   */
   @OneToOne(() => User, (user) => user.employee, { nullable: true })
-  @JoinColumn({ name: 'user_id' })
+  @JoinColumn({ name: 'id_user' })
   user?: User;
 }

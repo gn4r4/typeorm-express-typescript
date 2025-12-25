@@ -8,7 +8,13 @@ export class LocationService {
   }
 
   // Завантажуємо полицю, шафу і КНИГУ (щоб знати, чи зайняте місце)
-  private relations = ['shelf', 'shelf.cabinet', 'copybook'];
+  private relations = [
+    'shelf', 
+    'shelf.cabinet', 
+    'copybook', 
+    'copybook.edition',      
+    'copybook.edition.book' 
+  ];
 
   public async findAll(): Promise<CopybookLocation[]> {
     return this.locationRepository.find({

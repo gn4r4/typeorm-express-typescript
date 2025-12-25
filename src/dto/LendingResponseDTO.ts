@@ -6,24 +6,30 @@ import { CopybookResponseDTO } from './CopybookResponseDTO';
 export class LendingResponseDTO {
   id: number;
   dateLending: Date;
+  dateReturnPlanned: Date | null;
   dateReturn: Date | null;
   reader: ReaderResponseDTO | null;
   employee: EmployeeResponseDTO | null;
-  items: CopybookResponseDTO[]; // Список конкретних книг, які взяли
+  // Змінюємо тип масиву, оскільки ми додаємо нове поле
+  copybooks: (CopybookResponseDTO & { dateReturnActual: Date | null })[];  
 
   constructor(lending: Lending) {
     this.id = lending.id_lending;
     this.dateLending = lending.datelending;
+    this.dateReturnPlanned = lending.datereturn_planned || null;
     this.dateReturn = lending.datereturn || null;
 
     this.reader = lending.reader ? new ReaderResponseDTO(lending.reader) : null;
     this.employee = lending.employee ? new EmployeeResponseDTO(lending.employee) : null;
 
-    // Мапінг зв'язку many-to-many через проміжну таблицю LendingCopybook
     if (lending.lendingCopybooks && lending.lendingCopybooks.length > 0) {
-      this.items = lending.lendingCopybooks.map(lc => new CopybookResponseDTO(lc.copybook));
-    } else {
-      this.items = [];
+      this.copybooks = lending.lendingCopybooks.map(lc => ({
+        ...new CopybookResponseDTO(lc.copybook),
+        dateReturnActual: lc.datereturn_actual || null
+      }));
+    } 
+    else {
+      this.copybooks = [];
     }
   }
 }

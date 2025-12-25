@@ -6,7 +6,7 @@ export class Category {
   @PrimaryGeneratedColumn({ name: 'id_category' })
   id_category: number;
 
-  @Column({ length: 100 })
+  @Column({ length: 100, unique: true })
   name: string;
 
   // Одна категорія може мати багато книг

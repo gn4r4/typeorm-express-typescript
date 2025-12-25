@@ -6,10 +6,11 @@ export class EmployeeResponseDTO {
   fullName: string;
   lastname: string;
   firstname: string;
-  patronymic: string | null;
+  patronymic?: string | null;
   contact: string;
   address: string;
-  position: PositionResponseDTO | null;
+  position?: PositionResponseDTO | null;
+  id_user?: number | null;
 
   constructor(employee: Employee) {
     this.id = employee.id_employee;
@@ -18,9 +19,9 @@ export class EmployeeResponseDTO {
     this.patronymic = employee.patronymic || null;
     this.contact = employee.contact;
     this.address = employee.address;
-    
+    this.id_user = employee.id_user ?? null;
+
     this.fullName = `${employee.lastname} ${employee.firstname} ${employee.patronymic || ''}`.trim();
-    
     this.position = employee.position ? new PositionResponseDTO(employee.position) : null;
   }
 }

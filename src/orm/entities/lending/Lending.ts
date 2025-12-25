@@ -26,6 +26,9 @@ export class Lending {
   datelending: Date;
 
   @Column({ type: 'date', nullable: true })
+  datereturn_planned: Date;
+
+  @Column({ type: 'date', nullable: true })
   datereturn: Date;
 
   @OneToMany(() => LendingCopybook, (lendingCopybook) => lendingCopybook.lending)

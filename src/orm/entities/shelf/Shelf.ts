@@ -14,7 +14,7 @@ export class Shelf {
   @JoinColumn({ name: 'id_cabinet' })
   cabinet: Cabinet;
 
-  @Column({ length: 50 })
+  @Column({ length: 50, unique: true })
   shelfcode: string;
 
   @OneToMany(() => CopybookLocation, (location) => location.shelf)

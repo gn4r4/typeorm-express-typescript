@@ -33,14 +33,14 @@ export class UserService {
     return this.userRepository.findOne({
       where: { id },
       select: this.secureSelect,
-      relations: ['employee', 'reader'],
+      relations: ['employee'], // Reader не має зв'язку з User
     });
   }
 
   async findAll(): Promise<User[]> {
     return this.userRepository.find({
       select: this.secureSelect,
-      relations: ['employee', 'reader'],
+      relations: ['employee'],
     });
   }
 
@@ -52,14 +52,6 @@ export class UserService {
     return this.userRepository.save(newUser);
   }
 
-  /**
-   * Create a User with an associated Employee account in a single transaction
-   * Ensures data consistency between User and Employee
-   * 
-   * @param userData - Partial User data (email, password, username, etc.)
-   * @param employeeData - Partial Employee data (lastname, firstname, contact, etc.)
-   * @returns Promise containing both User and Employee
-   */
   async createUserWithEmployee(
     userData: Partial<User>,
     employeeData: Partial<Employee>
@@ -67,9 +59,7 @@ export class UserService {
     const connection = getConnection();
     const queryRunner = connection.createQueryRunner();
 
-    // Start transaction
     await queryRunner.startTransaction();
-
     try {
       // Create and save User
       const newUser = this.userRepository.create(userData);
@@ -78,76 +68,22 @@ export class UserService {
       }
       const savedUser = await queryRunner.manager.save(User, newUser);
 
-      // Create Employee with user_id and save
+      // Create Employee з id_user (а не user_id)
       const newEmployee = this.employeeRepository.create({
         ...employeeData,
-        user_id: savedUser.id,
+        id_user: savedUser.id,
       });
       const savedEmployee = await queryRunner.manager.save(Employee, newEmployee);
 
-      // Commit transaction
       await queryRunner.commitTransaction();
-
       return {
         user: savedUser,
         employee: savedEmployee,
       };
     } catch (error) {
-      // Rollback transaction on error
       await queryRunner.rollbackTransaction();
       throw error;
     } finally {
-      // Release query runner
-      await queryRunner.release();
-    }
-  }
-
-  /**
-   * Create a User with an associated Reader account in a single transaction
-   * Ensures data consistency between User and Reader
-   * 
-   * @param userData - Partial User data (email, password, username, etc.)
-   * @param readerData - Partial Reader data (lastname, firstname, contact, etc.)
-   * @returns Promise containing both User and Reader
-   */
-  async createUserWithReader(
-    userData: Partial<User>,
-    readerData: Partial<Reader>
-  ): Promise<{ user: User; reader: Reader }> {
-    const connection = getConnection();
-    const queryRunner = connection.createQueryRunner();
-
-    // Start transaction
-    await queryRunner.startTransaction();
-
-    try {
-      // Create and save User
-      const newUser = this.userRepository.create(userData);
-      if (userData.password) {
-        await newUser.hashPassword();
-      }
-      const savedUser = await queryRunner.manager.save(User, newUser);
-
-      // Create Reader with user_id and save
-      const newReader = this.readerRepository.create({
-        ...readerData,
-        user_id: savedUser.id,
-      });
-      const savedReader = await queryRunner.manager.save(Reader, newReader);
-
-      // Commit transaction
-      await queryRunner.commitTransaction();
-
-      return {
-        user: savedUser,
-        reader: savedReader,
-      };
-    } catch (error) {
-      // Rollback transaction on error
-      await queryRunner.rollbackTransaction();
-      throw error;
-    } finally {
-      // Release query runner
       await queryRunner.release();
     }
   }
@@ -180,7 +116,7 @@ export class UserService {
     return this.userRepository.findOne({
       where: { id },
       select: this.secureSelect,
-      relations: ['employee', 'reader'],
+      relations: ['employee'],
     });
   }
 
