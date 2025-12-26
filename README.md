@@ -233,18 +233,6 @@ author: Author;
 
 #### 2. Генерація та застосування міграцій
 
-Створюємо нову міграцію `Entities` за допомогою команди:
-
-```bash
-npm run migration:create Entities
-```
-
->![placeholder](<https://github.com/gn4r4/typeorm-express-typescript/blob/main/images/workshop5/1.png?raw=true>)
-
-Створена нова міграція:
-
->![placeholder](<https://github.com/gn4r4/typeorm-express-typescript/blob/main/images/workshop5/2.png?raw=true>)
-
 Генеруємо нові міграції для створених сутностей
 
 ```bash
