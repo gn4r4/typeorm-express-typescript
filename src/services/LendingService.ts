@@ -1,4 +1,4 @@
-import { getRepository, In } from 'typeorm';
+import { getRepository, In, IsNull, LessThan, MoreThanOrEqual } from 'typeorm';
 import { Lending } from '../orm/entities/lending/Lending';
 import { LendingCopybook } from '../orm/entities/lending_copybook/LendingCopybook';
 
@@ -103,4 +103,28 @@ export class LendingService {
     await this.lendingCopybookRepository.delete({ id_lending: id });
     await this.lendingRepository.delete(id);
   }
+
+  async countIssuedToday(): Promise<number> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return this.lendingRepository.count({
+      where: {
+        datelending: MoreThanOrEqual(today)
+      }
+    });
+  }
+
+  async countOverdue(): Promise<number> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return this.lendingRepository.count({
+      where: {
+        datereturn: IsNull(),  
+        datereturn_planned: LessThan(today)
+      }
+    });
+  }
+
 }

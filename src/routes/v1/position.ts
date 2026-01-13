@@ -6,8 +6,8 @@ import { checkRole } from '../../middleware/checkRole';
 
 const router = Router();
 
-router.get('/', [checkJwt], list);
-router.get('/:id([0-9]+)', [checkJwt], show);
+router.get('/', [checkJwt, checkRole(['ADMINISTRATOR'])], list);
+router.get('/:id([0-9]+)', [checkJwt, checkRole(['ADMINISTRATOR'])], show);
 
 router.post('/', [checkJwt, checkRole(['ADMINISTRATOR']), validatorCreatePosition], create);
 router.patch('/:id([0-9]+)', [checkJwt, checkRole(['ADMINISTRATOR']), validatorCreatePosition], edit);

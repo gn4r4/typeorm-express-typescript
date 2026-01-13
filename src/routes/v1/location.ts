@@ -6,15 +6,15 @@ import { checkRole } from '../../middleware/checkRole';
 
 const router = Router();
 
-router.get('/', [checkJwt], list);
-router.get('/:id', [checkJwt], show);
+router.get('/', [checkJwt, checkRole(['ADMINISTRATOR', 'LIBRARIAN', 'RESTORER'])], list);
+router.get('/:id([0-9]+)', [checkJwt, checkRole(['ADMINISTRATOR', 'LIBRARIAN', 'RESTORER'])], show);
 
 // Валідація перед створенням
 router.post('/', [checkJwt, checkRole(['ADMINISTRATOR'])], create);
 
 // Валідація перед редагуванням
-router.patch('/:id', [checkJwt, checkRole(['ADMINISTRATOR'])], edit);
+router.patch('/:id', [checkJwt, checkRole(['ADMINISTRATOR', 'RESTORER'])], edit);
 
-router.delete('/:id', [checkJwt, checkRole(['ADMINISTRATOR'])], destroy);
+router.delete('/:id', [checkJwt, checkRole(['ADMINISTRATOR', 'RESTORER'])], destroy);
 
 export default router;

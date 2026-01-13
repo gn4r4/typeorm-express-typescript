@@ -18,6 +18,8 @@ import orders from './orders';
 import location from './location';
 import reader from './reader';
 import supplier from './supplier';
+import stats from './stats';
+import catalog from './catalog';
 
 const router = Router();
 
@@ -39,6 +41,8 @@ router.use('/orders', orders);
 router.use('/locations', location);
 router.use('/readers', reader);
 router.use('/suppliers', supplier);
+router.use('/dashboard/stats', stats);
+router.use('/catalog', catalog);
 
 
 export default router;

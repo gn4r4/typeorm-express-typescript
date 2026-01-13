@@ -36,4 +36,8 @@ export class ReaderService {
   async delete(id: number): Promise<void> {
     await this.readerRepository.delete(id);
   }
+
+  async countAll(): Promise<number> {
+    return this.readerRepository.count();
+  }
 }

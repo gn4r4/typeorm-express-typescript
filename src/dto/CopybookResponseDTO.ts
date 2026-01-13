@@ -8,8 +8,8 @@ export class CopybookResponseDTO {
   edition: EditionResponseDTO | null;
   
   location: {
-    id: number;              // ID самого місця (CopybookLocation ID)
-    shelf: ShelfResponseDTO; // Вся інфо про полицю та шафу
+    id: number;              
+    shelf: ShelfResponseDTO; 
   } | null;
 
   constructor(copybook: Copybook) {

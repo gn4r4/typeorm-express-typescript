@@ -1,5 +1,5 @@
 import { User } from '../orm/entities/users/User';
-import { Role } from '../orm/entities/users/types';
+import { Language, Role } from '../orm/entities/users/types';
 
 export class UserResponseDTO {
   id: number;
@@ -7,7 +7,7 @@ export class UserResponseDTO {
   username: string;
   name: string;
   role: Role;
-  language: string;
+  language: Language;
   createdAt: Date;
 
   constructor(user: User) {
@@ -15,10 +15,8 @@ export class UserResponseDTO {
     this.email = user.email;
     this.username = user.username;
     this.name = user.name;
-    // Приводимо до типу Role, якщо в базі це рядок
     this.role = user.role as Role; 
-    this.language = user.language;
+    this.language = user.language as Language;
     this.createdAt = user.created_at;
-    // updated_at та password ми не повертаємо
   }
 }

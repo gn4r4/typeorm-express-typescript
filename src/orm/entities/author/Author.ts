@@ -18,7 +18,6 @@ export class Author {
   @Column({ type: 'date', nullable: true })
   dateofbirth: Date;
 
-  // Зв'язок з проміжною таблицею BookAuthor
   @OneToMany(() => BookAuthor, (bookAuthor) => bookAuthor.author)
   bookAuthors: BookAuthor[];
 }

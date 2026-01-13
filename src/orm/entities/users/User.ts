@@ -3,7 +3,6 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 
 import { Role, Language } from './types';
 import { Employee } from '../employee/Employee';
-import { Reader } from '../reader/Reader';
 
 @Entity('users')
 export class User {
@@ -34,13 +33,13 @@ export class User {
   name: string;
 
   @Column({
-    default: 'STANDARD' as Role,
+    default: 'READER' as Role,
     length: 30,
   })
   role: string;
 
   @Column({
-    default: 'en-US' as Language,
+    default: 'uk-UA' as Language,
     length: 15,
   })
   language: string;
