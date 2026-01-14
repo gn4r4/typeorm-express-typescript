@@ -1,8 +1,9 @@
 import bcrypt from 'bcryptjs';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToOne } from 'typeorm';
 
 import { Role, Language } from './types';
 import { Employee } from '../employee/Employee';
+import { Reader } from '../reader/Reader'; // Імпортуємо Reader
 
 @Entity('users')
 export class User {
@@ -44,8 +45,13 @@ export class User {
   })
   language: string;
 
+  // Зв'язок зі співробітником (якщо це адмін/бібліотекар)
   @OneToOne(() => Employee, (employee) => employee.user, { nullable: true })
   employee?: Employee;
+
+  // Зв'язок з читачем (якщо це звичайний юзер)
+  @OneToOne(() => Reader, (reader) => reader.user, { nullable: true })
+  reader?: Reader;
 
   @Column()
   @CreateDateColumn()

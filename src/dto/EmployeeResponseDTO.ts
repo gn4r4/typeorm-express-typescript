@@ -22,6 +22,7 @@ export class EmployeeResponseDTO {
     this.id_user = employee.id_user ?? null;
 
     this.fullName = `${employee.lastname} ${employee.firstname} ${employee.patronymic || ''}`.trim();
+    
     this.position = employee.position ? new PositionResponseDTO(employee.position) : null;
   }
 }

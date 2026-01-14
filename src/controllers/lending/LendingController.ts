@@ -57,4 +57,15 @@ export class LendingController {
       next(new CustomError(400, 'Raw', 'Error', null, err));
     }
   };
+
+  public history = async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.jwtPayload.id;
+    try {
+      const lendings = await this.lendingService.findByUserId(userId);
+      const dtos = lendings.map((l) => new LendingResponseDTO(l));
+      res.customSuccess(200, 'User lending history.', dtos);
+    } catch (err) {
+      next(new CustomError(400, 'Raw', 'Error fetching history', null, err));
+    }
+  };
 }

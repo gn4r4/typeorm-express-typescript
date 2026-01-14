@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, OneToMany, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, JoinColumn } from 'typeorm';
 import { Person } from '../person/Person';
 import { Lending } from '../lending/Lending';
 import { User } from '../users/User';
@@ -8,6 +8,13 @@ export class Reader extends Person {
   @PrimaryGeneratedColumn({ name: 'id_reader' })
   id_reader: number;
 
+  @Column({ nullable: true })
+  id_user: number;
+
   @OneToMany(() => Lending, (lending) => lending.reader)
   lendings: Lending[];
+
+  @OneToOne(() => User, (user) => user.reader, { nullable: true })
+  @JoinColumn({ name: 'id_user' })
+  user?: User;
 }

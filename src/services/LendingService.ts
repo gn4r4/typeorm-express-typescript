@@ -1,6 +1,7 @@
 import { getRepository, In, IsNull, LessThan, MoreThanOrEqual } from 'typeorm';
 import { Lending } from '../orm/entities/lending/Lending';
 import { LendingCopybook } from '../orm/entities/lending_copybook/LendingCopybook';
+import { Reader } from 'orm/entities/reader/Reader';
 
 export class LendingService {
 
@@ -10,6 +11,10 @@ export class LendingService {
 
   private get lendingCopybookRepository() {
     return getRepository(LendingCopybook);
+  }
+
+  private get readerRepository() {
+    return getRepository(Reader);
   }
 
   private relations = [
@@ -102,6 +107,26 @@ export class LendingService {
   async delete(id: number): Promise<void> {
     await this.lendingCopybookRepository.delete({ id_lending: id });
     await this.lendingRepository.delete(id);
+  }
+
+  async findByUserId(userId: number): Promise<Lending[]> {
+    const readerRepository = this.readerRepository;
+    
+    const reader = await readerRepository.findOne({ 
+      where: { id_user: userId } 
+    });
+
+    if (!reader) {
+      return []; 
+    }
+
+    return this.lendingRepository.find({
+      where: { id_reader: reader.id_reader }, 
+      relations: this.relations,
+      order: {
+        datelending: 'DESC'
+      }
+    });
   }
 
   async countIssuedToday(): Promise<number> {

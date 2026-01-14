@@ -9,7 +9,7 @@ export class UserController {
   public list = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const users = await this.userService.findAll();
-      // Трансформуємо масив сутностей у масив DTO
+      
       const usersDTO = users.map((user) => new UserResponseDTO(user));
       
       res.customSuccess(200, 'List of users.', usersDTO);
@@ -50,7 +50,6 @@ export class UserController {
       if (!user) return next(new CustomError(404, 'General', `User with id:${id} not found.`));
       
       await this.userService.delete(id);
-      // При видаленні DTO зазвичай не потрібен, повертаємо ID або повідомлення
       res.customSuccess(200, 'User successfully deleted.', { id });
     } catch (err) {
       next(new CustomError(400, 'Raw', 'Error', null, err));

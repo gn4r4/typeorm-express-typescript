@@ -29,7 +29,10 @@ export class EmployeeController {
 
   public create = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const employee = await this.employeeService.create(req.body);
+      const { id_user, ...employeeData } = req.body;
+      
+      const employee = await this.employeeService.create(employeeData, id_user);
+      
       res.customSuccess(201, 'Employee created.', new EmployeeResponseDTO(employee));
     } catch (err) {
       next(new CustomError(400, 'Raw', "Can't create employee.", null, err));

@@ -5,3 +5,4 @@ export const show = controller.show;
 export const create = controller.create;
 export const edit = controller.edit;
 export const destroy = controller.destroy;
+export const history = controller.history;
